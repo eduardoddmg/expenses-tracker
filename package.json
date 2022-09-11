@@ -1,0 +1,24 @@
+{
+  "name": "agenda",
+  "version": "1.0.0",
+  "description": "Uma agenda simples para você gerenciar os seus contatos",
+  "main": "backend/src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cd backend && npm i && node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eduardoddmg/agenda.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eduardoddmg/agenda/issues"
+  },
+  "homepage": "https://github.com/eduardoddmg/agenda#readme",
+  "engines": {
+    "node": "16.14.0",
+    "npm": "8.3.1"
+  }
+}
