@@ -4,7 +4,7 @@ const cors = require('cors');
 require("dotenv").config();
 
 const authRoute = require('./routes/auth');
-const contactRoute = require('./routes/contact');
+const transactionRoute = require('./routes/transaction');
 
 // settings
 const app = express();
@@ -14,7 +14,7 @@ const port = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoute);
-app.use("/api/contact", contactRoute);
+app.use("/api/transaction", transactionRoute);
 
 // mongodb connection
 mongoose.connect(process.env.MONGODB_URI);
