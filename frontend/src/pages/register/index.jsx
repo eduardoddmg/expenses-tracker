@@ -7,26 +7,67 @@ import {
   Button,
   Heading,
   Text,
+  FormErrorMessage,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { register as registerUser } from "../../utils";
+import { useNavigate } from "react-router-dom";
+
+const config = {
+  username: {
+    required: "o nome precisa ter entre 5 e 15 caracteres",
+    minLength: {
+      value: 5,
+      message: "o nome precisa ter entre 5 e 15 caracteres",
+    },
+    maxLength: {
+      value: 15,
+      message: "o nome precisa ter entre 5 e 15 caracteres",
+    },
+  },
+  password: {
+    required: "a senha tem que ter entre 5 e 15 caracteres",
+    minLength: {
+      value: 5,
+      message: "a senha tem que ter entre 5 e 15 caracteres",
+    },
+    maxLength: {
+      value: 15,
+      message: "a senha tem que ter entre 5 e 15 caracteres",
+    },
+  },
+};
 
 export function Register() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [messageAlert, setMessageAlert] = useState("");
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
 
-  const verifyForm = (event) => {
-    event.preventDefault();
-    if (username && password) return sendForm();
-  };
+  const navigate = useNavigate();
 
-  const sendForm = () => {
+  const sendForm = async (data) => {
+    const { username, password } = data;
     console.log(username, password);
+    const response = await registerUser(username, password);
+    console.log(response);
+    if (response.type === "success") return navigate("/login");
+    else setMessageAlert(response.err.response.data.message);
   };
 
   return (
     <Center w="100%">
       <VStack
+        onSubmit={handleSubmit(sendForm)}
         spacing={5}
         w="40%"
         my="10vh"
@@ -35,29 +76,37 @@ export function Register() {
         bg="#f4f4f4"
         p={10}
       >
-        <Heading>Registrar</Heading>
-        <FormControl>
+        <Heading>Register</Heading>
+        {messageAlert && (
+          <Alert status="error" align="center">
+            <AlertIcon />
+            <AlertTitle pb={0}>Algo aconteceu!</AlertTitle>
+            <AlertDescription>{messageAlert}</AlertDescription>
+          </Alert>
+        )}
+        <FormControl isInvalid={errors.username}>
           <FormLabel>Username</FormLabel>
           <Input
             focusBorderColor="green.500"
             type="text"
-            onChange={(e) => setUsername(e.target.value)}
+            {...register("username", config.username)}
           />
+          {errors.username && (
+            <FormErrorMessage>{errors.username.message}</FormErrorMessage>
+          )}
         </FormControl>
-        <FormControl>
+        <FormControl isInvalid={errors.password}>
           <FormLabel>Password</FormLabel>
           <Input
             focusBorderColor="green.500"
             type="password"
-            onChange={(e) => setPassword(e.target.value)}
+            {...register("password", config.password)}
           />
+          {errors.password && (
+            <FormErrorMessage>{errors.password.message}</FormErrorMessage>
+          )}
         </FormControl>
-        <Button
-          type="submit"
-          colorScheme="green"
-          w="100%"
-          onClick={(e) => verifyForm(e)}
-        >
+        <Button type="submit" colorScheme="green" w="100%">
           Entrar
         </Button>
         <Center>

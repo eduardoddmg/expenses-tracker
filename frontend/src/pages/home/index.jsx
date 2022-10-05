@@ -7,122 +7,39 @@ import {
   Heading,
   Button,
   useDisclosure,
-  Modal as ModalChakra,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
+  Menu,
+  MenuList,
+  MenuButton,
+  MenuItem,
   Text,
-  VStack,
-  FormControl,
-  FormLabel,
-  Input,
-  Select,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
 } from "@chakra-ui/react";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { AuthContext } from "../../context";
 import { useNavigate } from "react-router-dom";
-import { Navbar } from "../../components";
-import { createTransaction, getAllTransaction } from "../../utils";
+import { Card, Navbar, Modal } from "../../components";
+import { AiOutlineMore } from "react-icons/ai";
+import { getAllTransaction, deleteTransaction } from "../../utils";
 
-function Card({ title, value }) {
-  return (
-    <Box my={5} bg="#f4f4f4" w="30%" p={5} borderRadius="lg">
-      <Text>{title}</Text>
-      <Heading mt={3}>R$ {value}</Heading>
-    </Box>
-  );
-}
-
-function Modal({ isOpen, onClose }) {
-  const [name, setName] = useState("");
-  const [value, setValue] = useState(5.0);
-  const [type, setType] = useState("income");
-
-  const { getTransaction } = useContext(AuthContext);
-
-  const format = (val) => `R$ ` + val;
-  const parse = (val) => val.replace(/^\$/, "");
-
-  const sendData = async (event) => {
-    event.preventDefault();
-    const data = { value, type };
-    console.log(data);
-    try {
-      const response = await createTransaction({ name, value, type });
-      console.log(response);
-      getTransaction(response.data);
-      console.log(response.data);
-      setName("");
-      setValue(5.0);
-      setType("income");
-      onClose();
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  return (
-    <ModalChakra isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Transação</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <VStack spacing={5} as="form" pb={5}>
-            <FormControl>
-              <FormLabel>Nome</FormLabel>
-              <Input type="text" onChange={(e) => setName(e.target.value)} />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Valor</FormLabel>
-              <NumberInput onChange={(e) => setValue(e)} value={value}>
-                <NumberInputField />
-              </NumberInput>
-            </FormControl>
-            <FormControl>
-              <FormLabel>Tipo</FormLabel>
-              <Select onChange={(e) => setType(e.target.value)}>
-                {[
-                  ["Entrada", "income"],
-                  ["Saída", "expense"],
-                  ["Investimento", "invest"],
-                ].map((type, index) => (
-                  <option
-                    key={index}
-                    value={type[1]}
-                    onChange={(e) => console.log(e.target.value)}
-                  >
-                    {type[0]}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-            <Button
-              type="submit"
-              colorScheme="green"
-              w="100%"
-              onClick={(event) => sendData(event)}
-            >
-              Enviar
-            </Button>
-            <Center>
-              <Text>
-                Preencha <Text as="b">todos</Text> os campos
-              </Text>
-            </Center>
-          </VStack>
-        </ModalBody>
-      </ModalContent>
-    </ModalChakra>
-  );
-}
+const styleBtn = {
+  cursor: "pointer",
+  backgroundColor: "transparent",
+  fontWeight: "bold",
+  border: "none",
+};
 
 export function Home() {
+  const initialState = {
+    name: "",
+    value: 5,
+    type: "income",
+    id: "",
+  };
+
+  const [menuActive, setMenuActive] = useState(false);
+  const [loadingRemove, setLoadingRemove] = useState(false);
+  const [dataForm, setDataForm] = useState(initialState);
+  const [edit, setEdit] = useState(false);
+
   const {
     isLogged,
     token,
@@ -168,11 +85,48 @@ export function Home() {
   useEffect(() => {
     if (!window.localStorage.getItem("token")) navigate("/login");
   });
-  console.log(transactions);
+
+  useEffect(() => {
+    if (isOpen && !edit) {
+      setDataForm(initialState);
+    }
+  }, [isOpen]);
+
+  const create = () => {
+    setEdit(false);
+    setDataForm(initialState);
+    onOpen();
+  };
+
+  const remove = async (id) => {
+    try {
+      setLoadingRemove(true);
+      console.log(id);
+      const response = await deleteTransaction(id);
+      getTransaction(response.data);
+      console.log(response.data);
+      setLoadingRemove(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const editForm = async (data) => {
+    setDataForm(data);
+    setEdit(true);
+    onOpen();
+  };
+
   return (
     <>
       <Navbar />
-      <Modal isOpen={isOpen} onClose={onClose} />
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        data={dataForm}
+        edit={edit}
+        setEdit={setEdit}
+      />
       {isLogged ? (
         <Box py={5} px="15%">
           <Heading as="h4" size="md" mb={5}>
@@ -182,23 +136,61 @@ export function Home() {
             <Card title="Saldo total" value={totalCalc} />
             <Card title="Investimentos" value={total.totalInvest} />
           </Wrap>
-          <Button onClick={onOpen} colorScheme="green" mt={3} px={6}>
+          <Button onClick={create} colorScheme="green" mt={3} px={6}>
             Criar
           </Button>
-          <Wrap my={5}>
-            {transactions &&
-              transactions.map((transaction, index) => {
-                return (
-                  <Flex w="40%" my={5}>
-                    <Box bg={colorsType[transaction.type]} w="2%" />
-                    <Box bg="#f4f4f4" w="80%" px={4} py={2}>
-                      <Text>{transaction.name}</Text>
-                      <Text>R$ {transaction.value}</Text>
-                    </Box>
-                  </Flex>
-                );
-              })}
-          </Wrap>
+          {loadingRemove ? (
+            <Center mt="20vh">
+              <Spinner size="xl" />
+            </Center>
+          ) : (
+            <Wrap my={5}>
+              {transactions &&
+                transactions.map((transaction, index) => {
+                  return (
+                    <Flex w="40%" my={5}>
+                      <Box bg={colorsType[transaction.type]} w="2%" />
+                      <Flex
+                        bg="#f4f4f4"
+                        w="80%"
+                        px={4}
+                        py={2}
+                        justify="space-between"
+                      >
+                        <section>
+                          <Text>{transaction.name}</Text>
+                          <Text>R$ {transaction.value}</Text>
+                        </section>
+                        <Menu>
+                          <MenuButton
+                            as={Button}
+                            style={styleBtn}
+                            rightIcon={<AiOutlineMore />}
+                          />
+                          <MenuList>
+                            <MenuItem
+                              onClick={() =>
+                                editForm({
+                                  id: transaction._id,
+                                  value: transaction.value,
+                                  type: transaction.type,
+                                  name: transaction.name,
+                                })
+                              }
+                            >
+                              Editar
+                            </MenuItem>
+                            <MenuItem onClick={() => remove(transaction._id)}>
+                              Apagar
+                            </MenuItem>
+                          </MenuList>
+                        </Menu>
+                      </Flex>
+                    </Flex>
+                  );
+                })}
+            </Wrap>
+          )}
         </Box>
       ) : (
         <Center mt="20vh">

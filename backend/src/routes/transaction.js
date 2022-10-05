@@ -48,6 +48,7 @@ router.patch("/updateTransaction:id", async (req, res) => {
 router.delete("/deleteTransaction:id", async (req, res) => {
     try {
         const { id: idTransaction } = req.params;
+        console.log(idTransaction);
         const transaction = await transactionSchema.findOneAndDelete({ _id: idTransaction });
         return res.status(200).json({ message: "transação deletada!" });
     } catch (err) {

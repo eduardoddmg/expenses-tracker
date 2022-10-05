@@ -14,17 +14,6 @@ export const AuthProvider = ({ children }) => {
     totalInvest: 0,
   });
 
-  const register = async (username, password) => {
-    try {
-      const response = await api.post("/auth/register", {
-        username,
-        password,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   async function login(username, password) {
     try {
       const response = await api.post("/auth/login", {
@@ -80,7 +69,6 @@ export const AuthProvider = ({ children }) => {
       value={{
         username,
         isLogged,
-        register,
         login,
         verifyLogin,
         logout,
