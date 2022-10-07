@@ -14,7 +14,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState, useEffect, useContext, useCallback } from "react";
-import { AuthContext } from "../../context";
+import { useAuth, useTransaction } from "../../context";
 import { useNavigate } from "react-router-dom";
 import { Card, Navbar, Modal } from "../../components";
 import { AiOutlineMore } from "react-icons/ai";
@@ -27,7 +27,7 @@ const styleBtn = {
   border: "none",
 };
 
-export function Home() {
+function Home() {
   const initialState = {
     name: "",
     value: 5,
@@ -40,16 +40,9 @@ export function Home() {
   const [dataForm, setDataForm] = useState(initialState);
   const [edit, setEdit] = useState(false);
 
-  const {
-    isLogged,
-    token,
-    username,
-    verifyLogin,
-    logout,
-    total,
-    getTransaction,
-    transactions,
-  } = useContext(AuthContext);
+  const auth = useAuth();
+  const transactionContext = useTransaction();
+
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -59,32 +52,7 @@ export function Home() {
     invest: "orangered",
   };
 
-  const totalCalc = total.totalIncome - total.totalExpense;
-
-  useEffect(() => {
-    const fetchTransaction = async () => {
-      try {
-        const response = await getAllTransaction();
-        getTransaction(response.data);
-        return response;
-      } catch (err) {
-        return err;
-      }
-    };
-
-    fetchTransaction();
-    const tokenStorage = window.localStorage.getItem("token");
-    if (tokenStorage) {
-      verifyLogin(tokenStorage);
-    } else if ((!token || !username) && !isLogged) {
-      logout();
-      navigate("/login");
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!window.localStorage.getItem("token")) navigate("/login");
-  });
+  const totalCalc = transactionContext.total.totalIncome - transactionContext.total.totalExpense;
 
   useEffect(() => {
     if (isOpen && !edit) {
@@ -101,10 +69,8 @@ export function Home() {
   const remove = async (id) => {
     try {
       setLoadingRemove(true);
-      console.log(id);
       const response = await deleteTransaction(id);
-      getTransaction(response.data);
-      console.log(response.data);
+      transactionContext.getTransaction(response.data);
       setLoadingRemove(false);
     } catch (err) {
       console.log(err);
@@ -127,14 +93,14 @@ export function Home() {
         edit={edit}
         setEdit={setEdit}
       />
-      {isLogged ? (
+      {auth.isLogged ? (
         <Box py={5} px="15%">
           <Heading as="h4" size="md" mb={5}>
-            Olá, {username}
+            Olá, {auth.username}
           </Heading>
           <Wrap spacing={10}>
             <Card title="Saldo total" value={totalCalc} />
-            <Card title="Investimentos" value={total.totalInvest} />
+            <Card title="Investimentos" value={transactionContext.total.totalInvest} />
           </Wrap>
           <Button onClick={create} colorScheme="green" mt={3} px={6}>
             Criar
@@ -145,10 +111,10 @@ export function Home() {
             </Center>
           ) : (
             <Wrap my={5}>
-              {transactions &&
-                transactions.map((transaction, index) => {
+              {transactionContext.transactions &&
+                transactionContext.transactions.map((transaction, index) => {
                   return (
-                    <Flex w="40%" my={5}>
+                    <Flex w="40%" my={5} key={index}>
                       <Box bg={colorsType[transaction.type]} w="2%" />
                       <Flex
                         bg="#f4f4f4"
@@ -200,3 +166,5 @@ export function Home() {
     </>
   );
 }
+
+export default Home;

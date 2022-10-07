@@ -44,7 +44,7 @@ const config = {
   },
 };
 
-export function Register() {
+function Register() {
   const [messageAlert, setMessageAlert] = useState("");
   const {
     register,
@@ -121,3 +121,5 @@ export function Register() {
     </Center>
   );
 }
+
+export default Register;

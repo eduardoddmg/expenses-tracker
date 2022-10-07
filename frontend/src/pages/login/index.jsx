@@ -8,11 +8,16 @@ import {
   Heading,
   Text,
   FormErrorMessage,
+  Alert, 
+  AlertIcon,
+  AlertTitle, 
+  AlertDescription
 } from "@chakra-ui/react";
 import { useState, useContext } from "react";
 import { AuthContext } from "../../context";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { login as loginAction } from '../../utils';
 
 const config = {
   username: {
@@ -39,7 +44,8 @@ const config = {
   },
 };
 
-export function Login() {
+function Login() {
+  const [messageAlert, setMessageAlert] = useState('');
   const {
     register,
     handleSubmit,
@@ -51,10 +57,16 @@ export function Login() {
   const navigate = useNavigate();
 
   const loginForm = async (data) => {
+    console.log(data);
     const { username, password } = data;
-    const response = await login(username, password);
-    console.log(response);
-    navigate("/");
+    const response = await loginAction(username, password);
+    if (response.type === 'success') {
+      const resultLogin = login(response.response.data);
+      navigate("/");
+    } else if (response.type === 'error') {
+      const message = response.err.response.data.message;
+      setMessageAlert(message);
+    }
   };
 
   console.log(errors);
@@ -71,6 +83,13 @@ export function Login() {
         p={10}
       >
         <Heading>Login</Heading>
+        {messageAlert && (
+          <Alert status="error" align="center">
+            <AlertIcon />
+            <AlertTitle pb={0}>Algo aconteceu!</AlertTitle>
+            <AlertDescription>{messageAlert}</AlertDescription>
+          </Alert>
+        )}
         <FormControl isInvalid={errors.username}>
           <FormLabel>Username</FormLabel>
           <Input
@@ -108,3 +127,5 @@ export function Login() {
     </Center>
   );
 }
+
+export default Login;

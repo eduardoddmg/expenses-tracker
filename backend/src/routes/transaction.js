@@ -6,6 +6,8 @@ const router = express.Router();
 
 const verifyJWT = require('../middlewares/jwt');
 
+const types = ["income", "expense", "invest"];
+
 router.use(verifyJWT);
 
 router.get("/getAllTransaction", async(req, res) => {
@@ -26,8 +28,11 @@ router.get("/getAllTransaction", async(req, res) => {
 router.post("/createTransaction", async (req, res) => {
     try {
         const { id: idUser } = req.user;
-        console.log(idUser);
         req.body.idUser = idUser;
+        const typeExist = types.find(req.body.type);
+        if (!typeExist) return res.status(404).json({ message: 'esse tipo não existe' });
+        if (req.body.name.length < 5 || req.body.name.length > 15) return res.status(404).json({ message: 'o nome deve ter entre 5 e 15 caracteres' });
+        if (req.body.value < 5 || req.body.value > 100000) return res.status(404).json({ message: 'o valor deve estar entre 5 e 100.000' });
         const transaction = await transactionSchema.create(req.body);
         return res.status(201).json({ message: 'transação adicionada!' });        
     } catch (err) {
@@ -38,6 +43,9 @@ router.post("/createTransaction", async (req, res) => {
 router.patch("/updateTransaction:id", async (req, res) => {
     try {
         const { id: idTransaction } = req.params;
+        if (!typeExist) return res.status(404).json({ message: 'esse tipo não existe' });
+        if (req.body.name.length < 5 || req.body.name.length > 15) return res.status(404).json({ message: 'o nome deve ter entre 5 e 15 caracteres' });
+        if (req.body.value < 5 || req.body.value > 100000) return res.status(404).json({ message: 'o valor deve estar entre 5 e 100.000' });
         const transaction = await transactionSchema.findOneAndUpdate({ _id: idTransaction }, req.body);
         return res.status(200).json({ message: "transação editada!" });
     } catch (err) {
@@ -48,7 +56,6 @@ router.patch("/updateTransaction:id", async (req, res) => {
 router.delete("/deleteTransaction:id", async (req, res) => {
     try {
         const { id: idTransaction } = req.params;
-        console.log(idTransaction);
         const transaction = await transactionSchema.findOneAndDelete({ _id: idTransaction });
         return res.status(200).json({ message: "transação deletada!" });
     } catch (err) {

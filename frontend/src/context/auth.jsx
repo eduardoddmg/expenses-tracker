@@ -1,5 +1,10 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useContext } from "react";
 import { api } from "../utils";
+
+export const WithAuth = ({ children }) => {
+  console.log('oi')
+  return children;
+};
 
 export const AuthContext = createContext({});
 
@@ -14,20 +19,13 @@ export const AuthProvider = ({ children }) => {
     totalInvest: 0,
   });
 
-  async function login(username, password) {
-    try {
-      const response = await api.post("/auth/login", {
-        username,
-        password,
-      });
-      setUsername(response.data.username);
-      setToken(response.data.token);
+  async function login(data) {
+      setUsername(data.username);
+      setToken(data.token);
       setIsLogged(true);
-      window.localStorage.setItem("token", response.data.token);
-      return response;
-    } catch (err) {
-      console.log(err);
-    }
+      window.localStorage.setItem("token", data.token);
+      const tokenLocalStorage = window.localStorage.getItem("token");
+      return tokenLocalStorage;
   }
 
   async function verifyLogin(token) {
@@ -81,3 +79,5 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => useContext(AuthContext);

@@ -1,0 +1,21 @@
+{
+  "name": "expanses-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cd backend && npm i && node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eduardoddmg/expanses-tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eduardoddmg/expanses-tracker/issues"
+  },
+  "homepage": "https://github.com/eduardoddmg/expanses-tracker#readme"
+}
