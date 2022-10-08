@@ -26,10 +26,12 @@ router.get("/getAllTransaction", async(req, res) => {
 });
 
 router.post("/createTransaction", async (req, res) => {
+    console.log('oi')
     try {
         const { id: idUser } = req.user;
         req.body.idUser = idUser;
-        const typeExist = types.find(req.body.type);
+        console.log(req.body)
+        const typeExist = types.find(item => req.body.type === item);
         console.log('type', typeExist)
         if (!typeExist) return res.status(404).json({ message: 'esse tipo não existe' });
         console.log('console 1')
@@ -48,6 +50,7 @@ router.post("/createTransaction", async (req, res) => {
 router.patch("/updateTransaction:id", async (req, res) => {
     try {
         const { id: idTransaction } = req.params;
+        const typeExist = types.find(item => req.body.type === item);
         if (!typeExist) return res.status(404).json({ message: 'esse tipo não existe' });
         if (req.body.name.length < 5 || req.body.name.length > 15) return res.status(404).json({ message: 'o nome deve ter entre 5 e 15 caracteres' });
         if (req.body.value < 5 || req.body.value > 100000) return res.status(404).json({ message: 'o valor deve estar entre 5 e 100.000' });

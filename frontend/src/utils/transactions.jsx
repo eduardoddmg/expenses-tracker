@@ -10,9 +10,9 @@ export async function getAllTransaction(token) {
       "/transaction/getAllTransaction",
       axiosConfig(token)
     );
-    return response;
+    return { type: 'success', response };
   } catch (err) {
-    return err;
+    return { type: 'error', response: err }
   }
 }
 
@@ -26,7 +26,7 @@ export async function createTransaction(data, token) {
     console.log(response);
     return getAllTransaction(token);
   } catch (err) {
-    return err;
+    return { type: 'error', response: err }
   }
 }
 
@@ -36,7 +36,7 @@ export async function deleteTransaction(id, token) {
     const response = await api.delete(`/transaction/deleteTransaction${id}`, axiosConfig(token));
     return getAllTransaction(token);
   } catch(err) {
-    return err;
+    return { type: 'error', response: err }
   }
 }
 
@@ -45,7 +45,7 @@ export async function editTransaction(id, data, token) {
     const response = await api.patch(`/transaction/updateTransaction${id}`, data, axiosConfig(token));
     return getAllTransaction(token);
   } catch(err) {
-    return err;
+    return { type: 'error', response: err }
   }
 }
 

@@ -62,12 +62,11 @@ function Login() {
     setLoading(true);
     const { username, password } = data;
     const response = await loginAction(username, password);
+    console.log(response);
     if (response.type === 'success') {
       const resultLogin = auth.login(response.response.data);
-      const responseTransac = await getAllTransaction(response.response.data.token);
-      console.log(response.response.data.token)
+      const { response: responseTransac } = await getAllTransaction(response.response.data.token);
       transaction.getTransaction(responseTransac.data);
-      console.log(response, responseTransac);
       navigate("/");
     } else if (response.type === 'error') {
       const message = response.err.response.data.message;

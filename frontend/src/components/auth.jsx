@@ -52,7 +52,7 @@ export const GeralAuth = () => {
       try {
         console.log(token);
         if (token) {
-            const response = await getAllTransaction(token);
+            const { response } = await getAllTransaction(token);
             transaction.getTransaction(response.data);
             return { type: 'success', response };
           }

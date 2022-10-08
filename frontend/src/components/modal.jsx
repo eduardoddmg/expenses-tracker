@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useAuth, useTransaction } from '../context';
 
 import { useForm } from 'react-hook-form';
@@ -22,6 +22,7 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
+  useToast
 } from '@chakra-ui/react'; 
 
 const config = {
@@ -49,10 +50,13 @@ const config = {
   }
 }
 export function Modal({ isOpen, onClose, data, edit, setEdit }) {
+  const [loading, setLoading] = useState(false);
   const { register, handleSubmit, setValue, formState: { errors } } = useForm();
 
   const auth = useAuth();
   const transactionContext = useTransaction();
+
+  const toast = useToast();
 
   const format = (val) => `R$ ` + val;
   const parse = (val) => val.replace(/^\$/, "");
@@ -62,30 +66,40 @@ export function Modal({ isOpen, onClose, data, edit, setEdit }) {
     console.log(transaction)    
     if (edit) return editData(transaction);
     const { name, value, type } = transaction;
-    console.log(transaction);
-    try {
-      const response = await createTransaction({ name, value, type }, auth.token);
-      console.log(response);
-      // transactionContext.getTransaction(response.data);
-      // console.log(response.data);
-      onClose();
-    } catch (err) {
-      console.log(err);
+    setLoading(true);
+    const { type: typeResp, response } = await createTransaction({ name, value, type }, auth.token);
+    if (typeResp === 'success') transactionContext.getTransaction(response.data);
+    else if (typeResp === 'error') {
+      toast({
+      title: 'Error',
+      description: "Algo deu errado",
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+      position: 'bottom-right'})
     }
+    onClose();
+    setLoading(false);
   };
 
   const editData = async(transaction) => {
-    try {
-      console.log(data);
-      const response = await editTransaction(data.id, transaction, auth.token);
-      console.log(response);
-      transactionContext.getTransaction(response.data);
-      setEdit(false);
-      onClose();
-    } catch (err) {
-      console.log(err);
-    }
+    setLoading(true);
+    const { type: typeResp, response } = await editTransaction(data.id, transaction, auth.token);
+    if (typeResp === 'success') transactionContext.getTransaction(response.data);
+    else if (typeResp === 'error') {
+      toast({
+      title: 'Error',
+      description: "Algo deu errado",
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+      position: 'bottom-right'
+    })
   }
+    setEdit(false);
+    onClose();
+    setLoading(false);
+}
 
   useEffect(() => {
     setValue('name', data.name);
@@ -135,6 +149,7 @@ export function Modal({ isOpen, onClose, data, edit, setEdit }) {
               </Select>
             </FormControl>
             <Button
+              isLoading={loading}
               type="submit"
               colorScheme="green"
               w="100%"

@@ -12,11 +12,12 @@ import {
   MenuButton,
   MenuItem,
   Text,
+  useToast
 } from "@chakra-ui/react";
 import { useState, useEffect, useContext, useCallback } from "react";
 import { useAuth, useTransaction } from "../../context";
 import { useNavigate } from "react-router-dom";
-import { Card, Navbar, Modal } from "../../components";
+import { Card, Navbar, Modal, Toast } from "../../components";
 import { AiOutlineMore } from "react-icons/ai";
 import { getAllTransaction, deleteTransaction } from "../../utils";
 
@@ -27,14 +28,14 @@ const styleBtn = {
   border: "none",
 };
 
-function Home() {
-  const initialState = {
-    name: "",
-    value: 5,
-    type: "income",
-    id: "",
-  };
+const initialState = {
+  name: "",
+  value: 5,
+  type: "income",
+  id: "",
+};
 
+function Home() {
   const [menuActive, setMenuActive] = useState(false);
   const [loadingRemove, setLoadingRemove] = useState(false);
   const [dataForm, setDataForm] = useState(initialState);
@@ -43,6 +44,7 @@ function Home() {
   const auth = useAuth();
   const transactionContext = useTransaction();
 
+  const toast = useToast();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -67,14 +69,19 @@ function Home() {
   };
 
   const remove = async (id) => {
-    console.log(auth);
-    try {
-      setLoadingRemove(true);
-      const response = await deleteTransaction(id, auth.token);
-      transactionContext.getTransaction(response.data);
-      setLoadingRemove(false);
-    } catch (err) {
-      console.log(err);
+    setLoadingRemove(true);
+    const { type, response } = await deleteTransaction(id, auth.token);
+    if (type === 'success') transactionContext.getTransaction(response.data);
+    setLoadingRemove(false);
+    if (type === 'error') {
+      console.log(response)
+       toast({
+        title: 'Error',
+        description: "Algo deu errado",
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom-right'})
     }
   };
 
@@ -114,11 +121,11 @@ function Home() {
               <Spinner size="xl" />
             </Center>
           ) : (
-            <Wrap my={5}>
+            <Wrap my={5} w="full">
               {transactionContext.transactions &&
                 transactionContext.transactions.map((transaction, index) => {
                   return (
-                    <Flex w="40%" my={5} key={index}>
+                    <Flex w={{sm: "90%", md: "40%"}} my={5} key={index}>
                       <Box bg={colorsType[transaction.type]} w="2%" />
                       <Flex
                         bg="#f4f4f4"
