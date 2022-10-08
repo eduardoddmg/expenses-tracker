@@ -1,9 +1,15 @@
 import { Stack, Flex, Heading, Button } from "@chakra-ui/react";
 import { useContext } from "react";
-import { AuthContext } from "../context";
+import { useAuth, useTransaction } from "../context";
 
 export function Navbar() {
-  const { logout } = useContext(AuthContext);
+  const auth = useAuth();
+  const transaction = useTransaction();
+
+  const logout = () => {
+    auth.logout();
+    transaction.removeTransaction();
+  }
 
   return (
     <Stack w="100%" as="nav" bg="green.500" color="white" px="15%">

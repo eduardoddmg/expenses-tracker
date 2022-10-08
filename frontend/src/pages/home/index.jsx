@@ -67,9 +67,10 @@ function Home() {
   };
 
   const remove = async (id) => {
+    console.log(auth);
     try {
       setLoadingRemove(true);
-      const response = await deleteTransaction(id);
+      const response = await deleteTransaction(id, auth.token);
       transactionContext.getTransaction(response.data);
       setLoadingRemove(false);
     } catch (err) {
@@ -83,9 +84,10 @@ function Home() {
     onOpen();
   };
 
+  useEffect(() => console.log(transactionContext.transactions));
+
   return (
     <>
-      <Navbar />
       <Modal
         isOpen={isOpen}
         onClose={onClose}
@@ -94,6 +96,8 @@ function Home() {
         setEdit={setEdit}
       />
       {auth.isLogged ? (
+        <>
+        <Navbar />
         <Box py={5} px="15%">
           <Heading as="h4" size="md" mb={5}>
             Olá, {auth.username}
@@ -158,6 +162,7 @@ function Home() {
             </Wrap>
           )}
         </Box>
+        </>
       ) : (
         <Center mt="20vh">
           <Spinner size="xl" />

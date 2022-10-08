@@ -14,6 +14,14 @@ export const TransactionProvider = ({ children }) => {
   function getTransaction(data) {
     setTransactions(data.transactions);
     setTotal(data.total);
+    console.log('cheguei aqui');
+  }
+
+  function removeTransaction () {
+    setTransactions(null);
+    setTotal({totalIncome: 0,
+    totalExpense: 0,
+    totalInvest: 0})
   }
 
   return (
@@ -22,6 +30,7 @@ export const TransactionProvider = ({ children }) => {
         transactions,
         total,
         getTransaction,
+        removeTransaction
       }}
     >
       {children}

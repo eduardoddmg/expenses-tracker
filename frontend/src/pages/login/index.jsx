@@ -14,10 +14,10 @@ import {
   AlertDescription
 } from "@chakra-ui/react";
 import { useState, useContext } from "react";
-import { AuthContext } from "../../context";
+import { useAuth, useTransaction } from "../../context";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { login as loginAction } from '../../utils';
+import { login as loginAction, getAllTransaction } from '../../utils';
 
 const config = {
   username: {
@@ -46,6 +46,7 @@ const config = {
 
 function Login() {
   const [messageAlert, setMessageAlert] = useState('');
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -53,23 +54,28 @@ function Login() {
     formState: { errors },
   } = useForm();
 
-  const { login } = useContext(AuthContext);
+  const auth = useAuth();
+  const transaction = useTransaction();
   const navigate = useNavigate();
 
   const loginForm = async (data) => {
-    console.log(data);
+    setLoading(true);
     const { username, password } = data;
     const response = await loginAction(username, password);
     if (response.type === 'success') {
-      const resultLogin = login(response.response.data);
+      const resultLogin = auth.login(response.response.data);
+      const responseTransac = await getAllTransaction(response.response.data.token);
+      console.log(response.response.data.token)
+      transaction.getTransaction(responseTransac.data);
+      console.log(response, responseTransac);
       navigate("/");
     } else if (response.type === 'error') {
       const message = response.err.response.data.message;
       setMessageAlert(message);
     }
+    setLoading(false);
   };
 
-  console.log(errors);
   return (
     <Center w="100%">
       <VStack
@@ -112,7 +118,7 @@ function Login() {
             <FormErrorMessage>{errors.password.message}</FormErrorMessage>
           )}
         </FormControl>
-        <Button type="submit" colorScheme="green" w="100%">
+        <Button isLoading={loading} type="submit" colorScheme="green" w="100%">
           Entrar
         </Button>
         <Center>

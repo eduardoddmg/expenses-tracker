@@ -1,14 +1,14 @@
 import { api } from "./api";
 
-const axiosConfig = {
-  headers: { authorization: window.localStorage.getItem("token") },
-};
+const axiosConfig = (token) => {
+  return { headers: { authorization: token } }
+}
 
-export async function getAllTransaction() {
+export async function getAllTransaction(token) {
   try {
     const response = await api.get(
       "/transaction/getAllTransaction",
-      axiosConfig
+      axiosConfig(token)
     );
     return response;
   } catch (err) {
@@ -16,32 +16,34 @@ export async function getAllTransaction() {
   }
 }
 
-export async function createTransaction(data) {
+export async function createTransaction(data, token) {
   try {
     const response = await api.post(
       "/transaction/createTransaction",
       data,
-      axiosConfig
+      axiosConfig(token)
     );
-    return getAllTransaction();
+    console.log(response);
+    return getAllTransaction(token);
   } catch (err) {
     return err;
   }
 }
 
-export async function deleteTransaction(id) {
+export async function deleteTransaction(id, token) {
   try {
-    const response = await api.delete(`/transaction/deleteTransaction${id}`, axiosConfig);
-    return getAllTransaction();
+    console.log(token);
+    const response = await api.delete(`/transaction/deleteTransaction${id}`, axiosConfig(token));
+    return getAllTransaction(token);
   } catch(err) {
     return err;
   }
 }
 
-export async function editTransaction(id, data) {
+export async function editTransaction(id, data, token) {
   try {
-    const response = await api.patch(`/transaction/updateTransaction${id}`, data, axiosConfig);
-    return getAllTransaction();
+    const response = await api.patch(`/transaction/updateTransaction${id}`, data, axiosConfig(token));
+    return getAllTransaction(token);
   } catch(err) {
     return err;
   }

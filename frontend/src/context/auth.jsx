@@ -24,8 +24,6 @@ export const AuthProvider = ({ children }) => {
       setToken(data.token);
       setIsLogged(true);
       window.localStorage.setItem("token", data.token);
-      const tokenLocalStorage = window.localStorage.getItem("token");
-      return tokenLocalStorage;
   }
 
   async function verifyLogin(token) {
@@ -56,12 +54,6 @@ export const AuthProvider = ({ children }) => {
     window.localStorage.setItem("token", "");
   }
 
-  function getTransaction(data) {
-    setTransactions(data.transactions);
-    setTotal(data.total);
-    console.log(data.transactions);
-  }
-
   return (
     <AuthContext.Provider
       value={{
@@ -70,9 +62,7 @@ export const AuthProvider = ({ children }) => {
         login,
         verifyLogin,
         logout,
-        transactions,
-        total,
-        getTransaction,
+        token
       }}
     >
       {children}

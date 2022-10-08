@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react';
-import { AuthContext } from '../context';
+import { useAuth, useTransaction } from '../context';
 
 import { useForm } from 'react-hook-form';
 import { createTransaction, getAllTransaction, deleteTransaction, editTransaction } from "../utils";
@@ -51,7 +51,8 @@ const config = {
 export function Modal({ isOpen, onClose, data, edit, setEdit }) {
   const { register, handleSubmit, setValue, formState: { errors } } = useForm();
 
-  const { getTransaction } = useContext(AuthContext);
+  const auth = useAuth();
+  const transactionContext = useTransaction();
 
   const format = (val) => `R$ ` + val;
   const parse = (val) => val.replace(/^\$/, "");
@@ -63,10 +64,10 @@ export function Modal({ isOpen, onClose, data, edit, setEdit }) {
     const { name, value, type } = transaction;
     console.log(transaction);
     try {
-      const response = await createTransaction({ name, value, type });
+      const response = await createTransaction({ name, value, type }, auth.token);
       console.log(response);
-      getTransaction(response.data);
-      console.log(response.data);
+      // transactionContext.getTransaction(response.data);
+      // console.log(response.data);
       onClose();
     } catch (err) {
       console.log(err);
@@ -76,9 +77,9 @@ export function Modal({ isOpen, onClose, data, edit, setEdit }) {
   const editData = async(transaction) => {
     try {
       console.log(data);
-      const response = await editTransaction(data.id, transaction);
+      const response = await editTransaction(data.id, transaction, auth.token);
       console.log(response);
-      getTransaction(response.data);
+      transactionContext.getTransaction(response.data);
       setEdit(false);
       onClose();
     } catch (err) {
@@ -127,7 +128,6 @@ export function Modal({ isOpen, onClose, data, edit, setEdit }) {
                   <option
                     key={index}
                     value={type[1]}
-                    onChange={(e) => console.log(e.target.value)}
                   >
                     {type[0]}
                   </option>

@@ -46,6 +46,7 @@ const config = {
 
 function Register() {
   const [messageAlert, setMessageAlert] = useState("");
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -56,12 +57,14 @@ function Register() {
   const navigate = useNavigate();
 
   const sendForm = async (data) => {
+    setLoading(true);
     const { username, password } = data;
     console.log(username, password);
     const response = await registerUser(username, password);
     console.log(response);
     if (response.type === "success") return navigate("/login");
     else setMessageAlert(response.err.response.data.message);
+    setloading(false);
   };
 
   return (
@@ -106,7 +109,7 @@ function Register() {
             <FormErrorMessage>{errors.password.message}</FormErrorMessage>
           )}
         </FormControl>
-        <Button type="submit" colorScheme="green" w="100%">
+        <Button isLoading={loading} type="submit" colorScheme="green" w="100%">
           Entrar
         </Button>
         <Center>
