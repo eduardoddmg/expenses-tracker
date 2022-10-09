@@ -10,7 +10,10 @@ export async function getAllTransaction(token) {
       "/transaction/getAllTransaction",
       axiosConfig(token)
     );
-    return { type: 'success', response };
+    console.log(response);
+    const transactions = response.data.transactions;
+    const total = response.data.total;
+    return { type: 'success', data: {transactions, total} };
   } catch (err) {
     return { type: 'error', response: err }
   }

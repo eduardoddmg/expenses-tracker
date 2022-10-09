@@ -1,5 +1,5 @@
 import { createContext, useState, useContext } from "react";
-import { api } from "../utils";
+import { getAllTransaction, createTransaction as createTransactionAction, editTransaction as editTransactionAction } from "../utils";
 
 export const TransactionContext = createContext({});
 
@@ -11,10 +11,22 @@ export const TransactionProvider = ({ children }) => {
     totalInvest: 0,
   });
 
-  function getTransaction(data) {
+  async function getTransaction(token) {
+    const { type, data } = await getAllTransaction(token);
+    console.log(type, data);
     setTransactions(data.transactions);
     setTotal(data.total);
     console.log('cheguei aqui');
+  }
+
+  async function createTransaction(data, token) {
+    createTransactionAction(data, token);
+    getTransaction(token);
+  }
+
+  async function editTransaction(id, data, token) {
+    editTransactionAction(id, data, token);
+    getTransaction(token);
   }
 
   function removeTransaction () {
@@ -30,6 +42,8 @@ export const TransactionProvider = ({ children }) => {
         transactions,
         total,
         getTransaction,
+        createTransaction,
+        editTransaction,
         removeTransaction
       }}
     >

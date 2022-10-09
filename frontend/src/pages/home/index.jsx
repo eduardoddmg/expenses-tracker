@@ -37,7 +37,7 @@ const initialState = {
 
 function Home() {
   const [menuActive, setMenuActive] = useState(false);
-  const [loadingRemove, setLoadingRemove] = useState(false);
+  const [loadingSpinner, setLoadingSpinner] = useState(false);
   const [dataForm, setDataForm] = useState(initialState);
   const [edit, setEdit] = useState(false);
 
@@ -69,20 +69,10 @@ function Home() {
   };
 
   const remove = async (id) => {
-    setLoadingRemove(true);
-    const { type, response } = await deleteTransaction(id, auth.token);
-    if (type === 'success') transactionContext.getTransaction(response.data);
-    setLoadingRemove(false);
-    if (type === 'error') {
-      console.log(response)
-       toast({
-        title: 'Error',
-        description: "Algo deu errado",
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-        position: 'bottom-right'})
-    }
+    setLoadingSpinner(true);
+    deleteTransaction(id, auth.token);
+    const response = await transactionContext.getTransaction(auth.token);
+    setLoadingSpinner(false);
   };
 
   const editForm = async (data) => {
@@ -96,6 +86,7 @@ function Home() {
   return (
     <>
       <Modal
+        setLoadingSpinner={setLoadingSpinner}
         isOpen={isOpen}
         onClose={onClose}
         data={dataForm}
@@ -116,7 +107,7 @@ function Home() {
           <Button onClick={create} colorScheme="green" mt={3} px={6}>
             Criar
           </Button>
-          {loadingRemove ? (
+          {loadingSpinner ? (
             <Center mt="20vh">
               <Spinner size="xl" />
             </Center>

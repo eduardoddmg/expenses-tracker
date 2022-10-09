@@ -1,5 +1,5 @@
 import { createContext, useState, useContext } from "react";
-import { api } from "../utils";
+import { api, login as loginAction } from "../utils";
 
 export const WithAuth = ({ children }) => {
   console.log('oi')
@@ -20,10 +20,14 @@ export const AuthProvider = ({ children }) => {
   });
 
   async function login(data) {
-      setUsername(data.username);
-      setToken(data.token);
+      const { type, response, message } = await loginAction(data.username, data.password);
+      console.log(response);
+      setUsername(response.username);
+      setToken(response.token);
       setIsLogged(true);
-      window.localStorage.setItem("token", data.token);
+      window.localStorage.setItem("token", response.token);
+      if (type === 'error') return message;
+      else if (type === 'success') return {token: response.token, message: response.message};
   }
 
   async function verifyLogin(token) {

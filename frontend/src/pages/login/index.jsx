@@ -60,18 +60,8 @@ function Login() {
 
   const loginForm = async (data) => {
     setLoading(true);
-    const { username, password } = data;
-    const response = await loginAction(username, password);
-    console.log(response);
-    if (response.type === 'success') {
-      const resultLogin = auth.login(response.response.data);
-      const { response: responseTransac } = await getAllTransaction(response.response.data.token);
-      transaction.getTransaction(responseTransac.data);
-      navigate("/");
-    } else if (response.type === 'error') {
-      const message = response.err.response.data.message;
-      setMessageAlert(message);
-    }
+    const response = await auth.login(data);
+    transaction.getTransaction(response.token);
     setLoading(false);
   };
 

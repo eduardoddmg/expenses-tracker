@@ -28,10 +28,11 @@ export const WithAuth = () => {
 
 export const WithoutAuth = () => {
   const auth = useAuth();
+  const transaction = useTransaction();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (auth.isLogged) navigate('/');
+    if (auth.isLogged && transaction.transactions) navigate('/');
   });
 
   return <Outlet />
@@ -47,13 +48,12 @@ export const GeralAuth = () => {
   useEffect(() => {
     const tokenStorage = window.localStorage.getItem("token");
 
-    const token = auth.token || tokenStorage;
+    const token = tokenStorage;
     const fetchTransaction = async () => {
       try {
         console.log(token);
         if (token) {
-            const { response } = await getAllTransaction(token);
-            transaction.getTransaction(response.data);
+            transaction.getTransaction(token);
             return { type: 'success', response };
           }
       } catch (err) {
@@ -62,9 +62,10 @@ export const GeralAuth = () => {
     };
 
     fetchTransaction();
-    if (tokenStorage) {
+    console.log(token, transaction)
+    if (token) {
       console.log('sanjsajnkas')
-      auth.verifyLogin(tokenStorage);
+      auth.verifyLogin(token);
       navigate('/');
     } else if ((!auth.token || !auth.username) && !auth.isLogged) {
       auth.logout();

@@ -49,7 +49,7 @@ const config = {
     }
   }
 }
-export function Modal({ isOpen, onClose, data, edit, setEdit }) {
+export function Modal({ setLoadingSpinner, isOpen, onClose, data, edit, setEdit }) {
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit, setValue, formState: { errors } } = useForm();
 
@@ -66,39 +66,22 @@ export function Modal({ isOpen, onClose, data, edit, setEdit }) {
     console.log(transaction)    
     if (edit) return editData(transaction);
     const { name, value, type } = transaction;
-    setLoading(true);
-    const { type: typeResp, response } = await createTransaction({ name, value, type }, auth.token);
-    if (typeResp === 'success') transactionContext.getTransaction(response.data);
-    else if (typeResp === 'error') {
-      toast({
-      title: 'Error',
-      description: "Algo deu errado",
-      status: 'error',
-      duration: 3000,
-      isClosable: true,
-      position: 'bottom-right'})
-    }
+    setLoadingSpinner(true);
+    transactionContext.createTransaction({ name, value, type }, auth.token);
+    // createTransaction({ name, value, type }, auth.token);
+    // transactionContext.getTransaction(auth.token);
     onClose();
-    setLoading(false);
+    setLoadingSpinner(false);
   };
 
   const editData = async(transaction) => {
-    setLoading(true);
-    const { type: typeResp, response } = await editTransaction(data.id, transaction, auth.token);
-    if (typeResp === 'success') transactionContext.getTransaction(response.data);
-    else if (typeResp === 'error') {
-      toast({
-      title: 'Error',
-      description: "Algo deu errado",
-      status: 'error',
-      duration: 3000,
-      isClosable: true,
-      position: 'bottom-right'
-    })
-  }
+    setLoadingSpinner(true);
+    transactionContext.editTransaction(data.id, { name, value, type }, auth.token);
+    // editTransaction(data.id, transaction, auth.token);
+    // transactionContext.getTransaction(auth.token);
     setEdit(false);
     onClose();
-    setLoading(false);
+    setLoadingSpinner(false);
 }
 
   useEffect(() => {

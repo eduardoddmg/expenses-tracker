@@ -6,7 +6,9 @@ export const register = async (username, password) => {
         username,
         password,
       });
-      return { type: 'success', response }
+      const transactions = response.data.transactions;
+      const total = response.data.total;
+      return { type: 'success', data: { transactions, total } }
     } catch (err) {
       return { type: 'error', err }
     }
@@ -18,9 +20,9 @@ export const login = async (username, password) => {
         username,
         password,
       });
-      return { type: 'success', response }
+      return { type: 'success', response: response.data }
     } catch (err) {
-      return { type: 'error', err }
+      return { type: 'error', message: err.response.data.message }
     }
 };
 
