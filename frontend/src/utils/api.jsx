@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-  // baseURL: "https://expanses-tracker.herokuapp.com/api",
+  // baseURL: "http://localhost:3001/api"
 export const api = axios.create({
-  baseURL: "http://localhost:3001/api"
+  baseURL: "https://expanses-tracker.herokuapp.com/api",
 });
