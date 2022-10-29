@@ -13,7 +13,7 @@ import {
   AlertTitle, 
   AlertDescription
 } from "@chakra-ui/react";
-import { useState, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useAuth, useTransaction } from "../../context";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -61,7 +61,11 @@ function Login() {
   const loginForm = async (data) => {
     setLoading(true);
     const response = await auth.login(data);
-    transaction.getTransaction(response.token);
+    if (response.type === 'success') {
+      transaction.getTransaction(response.token);
+      navigate('/');
+    }
+    else if (response.type === 'error') setMessageAlert(response.message);
     setLoading(false);
   };
 
@@ -70,7 +74,7 @@ function Login() {
       <VStack
         onSubmit={handleSubmit(loginForm)}
         spacing={5}
-        w="40%"
+        w={{sm: "90%", md: "40%"}}
         my="10vh"
         maxW="1500px"
         as="form"
@@ -78,6 +82,12 @@ function Login() {
         p={10}
       >
         <Heading>Login</Heading>
+        {auth.messageAuth && 
+          <Alert status='success'>
+            <AlertIcon />
+            {auth.messageAuth}
+          </Alert>
+        }
         {messageAlert && (
           <Alert status="error" align="center">
             <AlertIcon />

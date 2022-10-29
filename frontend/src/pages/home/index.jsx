@@ -62,6 +62,9 @@ function Home() {
     }
   }, [isOpen]);
 
+
+  useEffect(() => auth.handleMessage(''),[]);
+
   const create = () => {
     setEdit(false);
     setDataForm(initialState);

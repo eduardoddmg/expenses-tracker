@@ -22,7 +22,7 @@ export const login = async (username, password) => {
       });
       return { type: 'success', response: response.data }
     } catch (err) {
-      return { type: 'error', message: err.response.data.message }
+      return { type: 'error', response: undefined, message: err.response.data.message }
     }
 };
 

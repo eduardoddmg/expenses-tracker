@@ -16,6 +16,7 @@ import {
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useAuth } from "../../context";
 import { register as registerUser } from "../../utils";
 import { useNavigate } from "react-router-dom";
 
@@ -45,6 +46,8 @@ const config = {
 };
 
 function Register() {
+  const auth = useAuth();
+
   const [messageAlert, setMessageAlert] = useState("");
   const [loading, setLoading] = useState(false);
   const {
@@ -62,9 +65,12 @@ function Register() {
     console.log(username, password);
     const response = await registerUser(username, password);
     console.log(response);
-    if (response.type === "success") return navigate("/login");
+    if (response.type === "success") {
+      auth.handleMessage('conta criada com sucesso!');
+      return navigate("/login");
+    }
     else setMessageAlert(response.err.response.data.message);
-    setloading(false);
+    setLoading(false);
   };
 
   return (
@@ -72,7 +78,7 @@ function Register() {
       <VStack
         onSubmit={handleSubmit(sendForm)}
         spacing={5}
-        w="40%"
+        w={{sm: "90%", md: "40%"}}
         my="10vh"
         maxW="1500px"
         as="form"

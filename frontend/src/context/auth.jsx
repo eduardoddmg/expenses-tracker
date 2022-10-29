@@ -12,20 +12,33 @@ export const AuthProvider = ({ children }) => {
   const [username, setUsername] = useState("");
   const [token, setToken] = useState("");
   const [isLogged, setIsLogged] = useState(false);
+  const [messageAuth, setMessageAuth] = useState('');
 
   async function login(data) {
       const { type, response, message } = await loginAction(data.username, data.password);
-      setUsername(response.username);
-      setToken(response.token);
-      setIsLogged(true);
-      if (type === 'error') return message;
-      else if (type === 'success') return {token: response.token, message: response.message};
+
+      if (type === 'error') {
+        setUsername('');
+        setToken('');
+        setIsLogged(false);
+        return {type , message};
+      }
+      else if (type === 'success') {
+        setUsername(response.username);
+        setToken(response.token);
+        setIsLogged(true);
+        return {type, token: response.token, message: response.message};
+      }
   }
 
   function logout() {
     setUsername("");
     setToken("");
     setIsLogged(false);
+  }
+
+  function handleMessage(message) {
+    setMessageAuth(message);
   }
 
   return (
@@ -35,7 +48,9 @@ export const AuthProvider = ({ children }) => {
         isLogged,
         login,
         logout,
-        token
+        token,
+        messageAuth,
+        handleMessage
       }}
     >
       {children}

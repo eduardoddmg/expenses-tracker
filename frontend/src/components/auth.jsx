@@ -30,7 +30,8 @@ export const WithoutAuth = () => {
 
   useEffect(() => {
     if (auth.isLogged && transaction.transactions) navigate('/');
-  });
+    console.log(auth, transaction);
+  }, [auth.isLogged]);
 
   return <Outlet />
 }
