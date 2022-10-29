@@ -1,5 +1,6 @@
 # Expenses tracker - gestor financeiro
-<img src="screen.jpg" alt="screen" />
+![imagem do projeto](screen.jpg)
+<br>
 ## Introdução
 Esse projeto é um gestor financeiro que consiste em o usuáiro conseguir controlar as suas finanças com maestria e eficiência, de modo a separar o seu dinheiro em 3 seções: entrada,saída e investimento.
 ## Tecnologias utilizadas
