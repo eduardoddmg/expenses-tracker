@@ -68,10 +68,9 @@ function Home() {
     onOpen();
   };
 
-  const remove = async (id) => {
+  const remove = async(id) => {
     setLoadingSpinner(true);
-    deleteTransaction(id, auth.token);
-    const response = await transactionContext.getTransaction(auth.token);
+    const response = await transactionContext.deleteTransaction(id, auth.token);
     setLoadingSpinner(false);
   };
 
@@ -80,8 +79,6 @@ function Home() {
     setEdit(true);
     onOpen();
   };
-
-  useEffect(() => console.log(transactionContext.transactions));
 
   return (
     <>

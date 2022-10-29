@@ -1,5 +1,5 @@
 import { createContext, useState, useContext } from "react";
-import { getAllTransaction, createTransaction as createTransactionAction, editTransaction as editTransactionAction } from "../utils";
+import { getAllTransaction, createTransaction as createTransactionAction, editTransaction as editTransactionAction, deleteTransaction as deleteTransactionAction } from "../utils";
 
 export const TransactionContext = createContext({});
 
@@ -13,28 +13,33 @@ export const TransactionProvider = ({ children }) => {
 
   async function getTransaction(token) {
     const { type, data } = await getAllTransaction(token);
-    console.log(type, data);
+    console.log('data: ', data);
     setTransactions(data.transactions);
     setTotal(data.total);
-    console.log('cheguei aqui');
   }
 
   async function createTransaction(data, token) {
-    createTransactionAction(data, token);
-    getTransaction(token);
+    const response = await createTransactionAction(data, token);
+    if (response) getTransaction(token);
   }
 
   async function editTransaction(id, data, token) {
-    editTransactionAction(id, data, token);
-    getTransaction(token);
+    const response = await editTransactionAction(id, data, token);
+    if (response) getTransaction(token);
   }
+
+  async function deleteTransaction(id, token) {
+    const response = await deleteTransactionAction(id, token);
+    if (response) getTransaction(token);
+  } 
 
   function removeTransaction () {
     setTransactions(null);
     setTotal({totalIncome: 0,
     totalExpense: 0,
-    totalInvest: 0})
+    totalInvest: 0});
   }
+
 
   return (
     <TransactionContext.Provider
@@ -44,7 +49,8 @@ export const TransactionProvider = ({ children }) => {
         getTransaction,
         createTransaction,
         editTransaction,
-        removeTransaction
+        removeTransaction,
+        deleteTransaction
       }}
     >
       {children}

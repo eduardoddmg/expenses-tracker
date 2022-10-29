@@ -51,7 +51,7 @@ const config = {
 }
 export function Modal({ setLoadingSpinner, isOpen, onClose, data, edit, setEdit }) {
   const [loading, setLoading] = useState(false);
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+  const { register, handleSubmit, resetField, setValue, formState: { errors } } = useForm();
 
   const auth = useAuth();
   const transactionContext = useTransaction();
@@ -68,20 +68,23 @@ export function Modal({ setLoadingSpinner, isOpen, onClose, data, edit, setEdit 
     const { name, value, type } = transaction;
     setLoadingSpinner(true);
     transactionContext.createTransaction({ name, value, type }, auth.token);
-    // createTransaction({ name, value, type }, auth.token);
-    // transactionContext.getTransaction(auth.token);
     onClose();
     setLoadingSpinner(false);
+    setValue('name', '');
+    setValue('type', 'income');
+    setValue('value', 5.00);
   };
 
   const editData = async(transaction) => {
+    const { name, value, type } = transaction;
     setLoadingSpinner(true);
     transactionContext.editTransaction(data.id, { name, value, type }, auth.token);
-    // editTransaction(data.id, transaction, auth.token);
-    // transactionContext.getTransaction(auth.token);
     setEdit(false);
     onClose();
     setLoadingSpinner(false);
+    setValue('name', '');
+    setValue('type', 'income');
+    setValue('value', 5.00);
 }
 
   useEffect(() => {

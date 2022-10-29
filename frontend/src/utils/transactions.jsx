@@ -10,7 +10,6 @@ export async function getAllTransaction(token) {
       "/transaction/getAllTransaction",
       axiosConfig(token)
     );
-    console.log(response);
     const transactions = response.data.transactions;
     const total = response.data.total;
     return { type: 'success', data: {transactions, total} };
@@ -26,8 +25,7 @@ export async function createTransaction(data, token) {
       data,
       axiosConfig(token)
     );
-    console.log(response);
-    return getAllTransaction(token);
+    return true;
   } catch (err) {
     return { type: 'error', response: err }
   }
@@ -35,9 +33,8 @@ export async function createTransaction(data, token) {
 
 export async function deleteTransaction(id, token) {
   try {
-    console.log(token);
     const response = await api.delete(`/transaction/deleteTransaction${id}`, axiosConfig(token));
-    return getAllTransaction(token);
+    return true;
   } catch(err) {
     return { type: 'error', response: err }
   }
@@ -46,7 +43,7 @@ export async function deleteTransaction(id, token) {
 export async function editTransaction(id, data, token) {
   try {
     const response = await api.patch(`/transaction/updateTransaction${id}`, data, axiosConfig(token));
-    return getAllTransaction(token);
+    return true;
   } catch(err) {
     return { type: 'error', response: err }
   }
