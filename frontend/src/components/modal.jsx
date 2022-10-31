@@ -63,7 +63,6 @@ export function Modal({ setLoadingSpinner, isOpen, onClose, data, edit, setEdit 
 
 
   const sendData = async (transaction) => {
-    console.log(transaction)    
     if (edit) return editData(transaction);
     const { name, value, type } = transaction;
     setLoadingSpinner(true);

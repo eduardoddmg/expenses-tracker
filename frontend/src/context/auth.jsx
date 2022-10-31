@@ -2,7 +2,6 @@ import { createContext, useState, useContext } from "react";
 import { api, login as loginAction } from "../utils";
 
 export const WithAuth = ({ children }) => {
-  console.log('oi')
   return children;
 };
 

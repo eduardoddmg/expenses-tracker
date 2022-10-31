@@ -10,7 +10,6 @@ export const WithAuth = () => {
   const transaction = useTransaction();
 
   useEffect(() => {
-    console.log(auth);
     if (!auth.isLogged) navigate('/login');
   }, [auth.isLogged]);
 
@@ -30,7 +29,6 @@ export const WithoutAuth = () => {
 
   useEffect(() => {
     if (auth.isLogged && transaction.transactions) navigate('/');
-    console.log(auth, transaction);
   }, [auth.isLogged]);
 
   return <Outlet />

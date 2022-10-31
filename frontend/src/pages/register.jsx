@@ -62,9 +62,7 @@ function Register() {
   const sendForm = async (data) => {
     setLoading(true);
     const { username, password } = data;
-    console.log(username, password);
     const response = await registerUser(username, password);
-    console.log(response);
     if (response.type === "success") {
       auth.handleMessage('conta criada com sucesso!');
       return navigate("/login");

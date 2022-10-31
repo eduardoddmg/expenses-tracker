@@ -1,6 +1,11 @@
 import { createContext, useState, useContext } from "react";
-import { getAllTransaction, createTransaction as createTransactionAction, editTransaction as editTransactionAction, deleteTransaction as deleteTransactionAction } from "../utils";
-import { useAuth } from './auth';
+import {
+  getAllTransaction,
+  createTransaction as createTransactionAction,
+  editTransaction as editTransactionAction,
+  deleteTransaction as deleteTransactionAction,
+} from "../utils";
+import { useAuth } from "./auth";
 
 export const TransactionContext = createContext({});
 
@@ -16,7 +21,6 @@ export const TransactionProvider = ({ children }) => {
 
   async function getTransaction(token) {
     const { type, data } = await getAllTransaction(token);
-    console.log('data: ', data);
     setTransactions(data.transactions);
     setTotal(data.total);
   }
@@ -34,15 +38,12 @@ export const TransactionProvider = ({ children }) => {
   async function deleteTransaction(id, token) {
     const response = await deleteTransactionAction(id, token);
     if (response) getTransaction(token);
-  } 
-
-  function removeTransaction () {
-    setTransactions(null);
-    setTotal({totalIncome: 0,
-    totalExpense: 0,
-    totalInvest: 0});
   }
 
+  function removeTransaction() {
+    setTransactions(null);
+    setTotal({ totalIncome: 0, totalExpense: 0, totalInvest: 0 });
+  }
 
   return (
     <TransactionContext.Provider
@@ -53,7 +54,7 @@ export const TransactionProvider = ({ children }) => {
         createTransaction,
         editTransaction,
         removeTransaction,
-        deleteTransaction
+        deleteTransaction,
       }}
     >
       {children}

@@ -45,7 +45,6 @@ export function NavbarHome() {
         justify="space-between"
         align="center"
         py={3}
-        border="1px solid white"
       >
         <Heading as="h4" size="md">
           <Link to="/">
