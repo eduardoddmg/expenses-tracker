@@ -15,11 +15,11 @@ import {
   useToast
 } from "@chakra-ui/react";
 import { useState, useEffect, useContext, useCallback } from "react";
-import { useAuth, useTransaction } from "../../context";
+import { useAuth, useTransaction } from "../context";
 import { useNavigate } from "react-router-dom";
-import { Card, Navbar, Modal, Toast } from "../../components";
+import { Card, NavbarHome, Modal, Toast } from "../components";
 import { AiOutlineMore } from "react-icons/ai";
-import { getAllTransaction, deleteTransaction } from "../../utils";
+import { getAllTransaction, deleteTransaction } from "../utils";
 
 const styleBtn = {
   cursor: "pointer",
@@ -95,10 +95,10 @@ function Home() {
       />
       {auth.isLogged ? (
         <>
-        <Navbar />
-        <Box py={5} px="15%">
+        <NavbarHome />
+        <Box py={5} px="15%" maxW="2000">
           <Heading as="h4" size="md" mb={5}>
-            Olá, {auth.username}
+            Dashboard
           </Heading>
           <Wrap spacing={10}>
             <Card title="Saldo total" value={totalCalc} />

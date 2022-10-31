@@ -1,9 +1,12 @@
 import { createContext, useState, useContext } from "react";
 import { getAllTransaction, createTransaction as createTransactionAction, editTransaction as editTransactionAction, deleteTransaction as deleteTransactionAction } from "../utils";
+import { useAuth } from './auth';
 
 export const TransactionContext = createContext({});
 
 export const TransactionProvider = ({ children }) => {
+  const auth = useAuth();
+
   const [transactions, setTransactions] = useState(null);
   const [total, setTotal] = useState({
     totalIncome: 0,

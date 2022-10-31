@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState("");
   const [isLogged, setIsLogged] = useState(false);
   const [messageAuth, setMessageAuth] = useState('');
+  const [authError, setAuthError] = useState(false);
 
   async function login(data) {
       const { type, response, message } = await loginAction(data.username, data.password);
@@ -41,6 +42,10 @@ export const AuthProvider = ({ children }) => {
     setMessageAuth(message);
   }
 
+  function handleAuthError() {
+    setAuthError(!authError)
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -50,7 +55,9 @@ export const AuthProvider = ({ children }) => {
         logout,
         token,
         messageAuth,
-        handleMessage
+        handleMessage,
+        authError,
+        handleAuthError
       }}
     >
       {children}

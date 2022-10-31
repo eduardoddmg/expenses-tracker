@@ -10,7 +10,7 @@ const verifyJWT = async(req, res, next) => {
 		req.user = { id, username };
 		next();
 	} catch (err) {
-		return res.status(500).json({ message: err });
+		return res.status(500).json({ message: 'sessao expirada' });
 	}
 };
 

@@ -14,10 +14,10 @@ import {
   AlertDescription
 } from "@chakra-ui/react";
 import { useState, useEffect, useContext } from "react";
-import { useAuth, useTransaction } from "../../context";
+import { useAuth, useTransaction } from "../context";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { login as loginAction, getAllTransaction } from '../../utils';
+import { login as loginAction, getAllTransaction } from '../utils';
 
 const config = {
   username: {
