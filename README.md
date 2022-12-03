@@ -3,6 +3,29 @@
 <br>
 ## Introdução
 Esse projeto é um gestor financeiro que consiste em o usuáiro conseguir controlar as suas finanças com maestria e eficiência, de modo a separar o seu dinheiro em 3 seções: entrada,saída e investimento.
+## Rodar o projeto
+Clone o projeto
+```
+git clone https://github.com/eduardoddmg/expenses-tracker
+```
+Rodar Front-End
+```
+cd frontend
+npm i
+npm run dev
+```
+Rodar Back-End
+```
+cd backend
+npm i
+npm run dev
+```
+Adicione as variáveis do servidor
+```
+MONGODB_URI
+SECRET
+PORT
+```
 ## Tecnologias utilizadas
 #### Back-End
 * NodeJS
