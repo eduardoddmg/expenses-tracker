@@ -15,15 +15,18 @@ const Profile = () => {
 				<Heading size="md">
 					{username}
 				</Heading>
-				<Box py={10}>
+				<Box py={5}>
 	          		<Heading size="md">
 	          			Descrição
 	          		</Heading>
 	          		<Text>Eu quero conseguir dinheiro para alcançar liberdade financeira</Text>
 				</Box>
-          		<Heading size="md">
-          			Objetivos
-          		</Heading>
+				<Box>
+	          		<Heading size="md" pb={4}>
+          				Objetivos
+          			</Heading>
+          			<Button colorScheme="green" variant="outline">Adiconar</Button>
+				</Box>
 			</Box>
 		</>
 	)

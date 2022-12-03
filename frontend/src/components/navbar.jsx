@@ -34,7 +34,6 @@ export function NavbarProfile() {
 }
 
 export function NavbarHome() {
-
   const navigate = useNavigate();
   const goToProfile = () => navigate('/profile');
 
